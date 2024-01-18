@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <title>Category Details</title>
+        <link
+            href="../assets/css/output.css"
+            rel="stylesheet"
+        />
+        <link
+            rel="preconnect"
+            href="https://fonts.googleapis.com"
+        />
+        <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body class="font-jost">
+        <nav class="flex justify-between px-5 py-3 border-bottom border relative">
+            <a
+                href="/"
+                class="font-medium text-xl text-slate-800"
+                >mealapp</a
+            >
+            <button
+                class="w-6 aspect-square md:hidden"
+                id="toggle-navbar-button"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                >
+                    <path d="M3 4H21V6H3V4ZM3 11H21V13H3V11ZM3 18H21V20H3V18Z"></path>
+                </svg>
+            </button>
+            <ul
+                id="navbar-menu"
+                class="gap-6 md:w-fit bg-white w-full left-0 top-[-9999px] md:border-none border-t py-8 flex md:flex-row md:static md:py-0 flex-col text-center absolute"
+            >
+                <li>
+                    <a
+                        href="/"
+                        class="font-light text-slate-800 hover:underline underline-offset-2"
+                        >Home</a
+                    >
+                </li>
+
+                <li>
+                    <a
+                        href="/"
+                        class="font-light text-slate-800 hover:underline underline-offset-2"
+                        >Foods</a
+                    >
+                </li>
+                <li>
+                    <a
+                        href="/"
+                        class="font-light text-slate-800 hover:underline underline-offset-2"
+                        >Ingredients</a
+                    >
+                </li>
+                <li>
+                    <a
+                        href="/"
+                        class="font-light text-slate-800 hover:underline underline-offset-2"
+                        >Local Culinary</a
+                    >
+                </li>
+            </ul>
+        </nav>
+
+        <div class="px-5 py-10 lg:px-40 lg:py-10 flex flex-col gap-y-12 max-w-7xl mx-auto">
+            <!-- Breadcrumb -->
+            <div class="flex gap-x-4 flex-wrap">
+                <div class="flex gap-x-2 items-center">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="w-4 aspect-square"
+                    >
+                        <path
+                            d="M20 20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V11L1 11L11.3273 1.6115C11.7087 1.26475 12.2913 1.26475 12.6727 1.6115L23 11L20 11V20ZM11 13V19H13V13H11Z"
+                        ></path>
+                    </svg>
+                    <a
+                        href="/"
+                        class="whitespace-nowrap"
+                        >Home</a
+                    >
+                </div>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="w-6 aspect-square"
+                >
+                    <path
+                        d="M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"
+                    ></path>
+                </svg>
+                <a
+                    href="/"
+                    class="whitespace-nowrap"
+                    >Category</a
+                >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="w-6 aspect-square"
+                >
+                    <path
+                        d="M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"
+                    ></path>
+                </svg>
+                <p class="whitespace-nowrap category-name text-black/50"></p>
+            </div>
+            <!-- End of Breadcrumb -->
+
+            <h1 class="text-5xl category-name"></h1>
+            <hr />
+
+            <ul
+                id="category-list"
+                class="grid justify-center grid-cols-1 md:grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-5"
+            ></ul>
+        </div>
+
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+            integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
+            crossorigin="anonymous"
+        ></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="/assets/js/navbar.js"></script>
+
+        <script>
+            $(document).ready(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+
+                const categoryName = urlParams.get('name');
+                if (!categoryName) {
+                    window.location.replace('/');
+                }
+
+                document.title = `${categoryName} Category`;
+
+                axios
+                    .get(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${categoryName}`)
+
+                    .then((response) => {
+                        $('.category-name').text(categoryName);
+
+                        response.data.meals.forEach((meal) => {
+                            $('#category-list').append(`<li>
+                            <a class="flex justify-center items-center aspect-[14/15] relative rounded-2xl overflow-hidden" href="/detail/index.html?id=${meal.idMeal}">
+                                <img src="${meal.strMealThumb}" alt="" class="bg-cover h-full">
+                                <span class="px-3 text-white bg-black/50 flex justify-center items-center absolute top-0 bottom-0 right-0 left-0 text-center"><p class="font-medium text-lg">${meal.strMeal}</p></span>
+                            </a>
+                        </li>`);
+                        });
+                    })
+                    .catch(() => window.location.replace('/'));
+            });
+        </script>
+    </body>
+</html>
